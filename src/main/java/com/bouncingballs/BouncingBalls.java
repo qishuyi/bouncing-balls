@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 public class BouncingBalls {
     private class GUI {
@@ -12,7 +11,7 @@ public class BouncingBalls {
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
         JPanel controlPanel = new JPanel();
-        JPanel graphicPanel = new GraphicPanel(700, 1000, 50);
+        JPanel graphicPanel = new GraphicPanel(700, 1000, 60);
         JButton pauseButton = new JButton();
         JButton stopButton = new JButton();
 
