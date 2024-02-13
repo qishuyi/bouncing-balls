@@ -36,39 +36,36 @@ public class GraphicPanel extends JPanel {
     private JPanel endPanel = new JPanel();
     private JButton endYesButton = new JButton("Yes");
     private JButton endNoButton = new JButton("No");
-    private JPanel pausePanel = new JPanel();
-    private JButton pauseYesButton = new JButton("Yes");
-    private JButton pauseNoButton = new JButton("No");
+    // private JPanel pausePanel = new JPanel();
+    // private JButton pauseYesButton = new JButton("Yes");
+    // private JButton pauseNoButton = new JButton("No");
 
     // Parameters to this class
     private int width;
     private int height;
     private int yDistance;
-    private Timer timer;
+    // private ArrayList<Timer> timers;
 
     // Configure panels and the buttons on the panel
     private void configurePanels() {
-        pausePanel.setLayout(new BorderLayout());
-        JLabel pauseLabel = new JLabel("Continue the game?");
-        pausePanel.add(pauseLabel, BorderLayout.PAGE_START);
-        pauseYesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Slows down the movement of the balls
-                timer.start();
-
-                pausePanel.setVisible(false);
-            }
-        });
-        pauseNoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Exit the game
-                System.exit(0);
-            }
-        });
-        pausePanel.add(pauseYesButton, BorderLayout.WEST);
-        pausePanel.add(pauseNoButton, BorderLayout.EAST);
+        // pausePanel.setLayout(new BorderLayout());
+        // JLabel pauseLabel = new JLabel("Continue the game?");
+        // pausePanel.add(pauseLabel, BorderLayout.PAGE_START);
+        // pauseYesButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         pausePanel.setVisible(false);
+        //     }
+        // });
+        // pauseNoButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         // Exit the game
+        //         System.exit(0);
+        //     }
+        // });
+        // pausePanel.add(pauseYesButton, BorderLayout.WEST);
+        // pausePanel.add(pauseNoButton, BorderLayout.EAST);
 
         endPanel.setLayout(new BorderLayout());
         JLabel endLabel = new JLabel("Do you want to restart the game? Clicing \"No\" will close the window.");
@@ -91,11 +88,11 @@ public class GraphicPanel extends JPanel {
         endPanel.add(endYesButton, BorderLayout.WEST);
         endPanel.add(endNoButton, BorderLayout.EAST);
 
-        pausePanel.setVisible(false);
+        // pausePanel.setVisible(false);
         endPanel.setVisible(false);
 
         // Add the panels to this big panel
-        add(pausePanel);
+        // add(pausePanel);
         add(endPanel);
     }
 
@@ -143,7 +140,6 @@ public class GraphicPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             int x;
             int y;
-            GraphicPanel graphicPanel = GraphicPanel.this;
 
             private void bounceBalls(ArrayList<Integer> indices) {
                 // Reference:
@@ -202,7 +198,7 @@ public class GraphicPanel extends JPanel {
                             xAndY.add(ball.getX());
                             xAndY.add(ball.getY());
                             // Remove smaller balls when they collide
-                            if (coordinates.contains(xAndY)) {
+                            while (coordinates.contains(xAndY)) {
                                 // Find colliding ball
                                 int otherIndex = coordinates.indexOf(xAndY);
                                 // Skip out of range indices
@@ -217,6 +213,7 @@ public class GraphicPanel extends JPanel {
                                             ballsList.set(otherIndex, null);
                                             coordinates.set(otherIndex, null);
                                             coordinates.set(indices.get(i), xAndY);
+                                            break;
                                         } else {
                                             ballsList.set(indices.get(i), null);
                                             ballsList.set(otherIndex, null);
@@ -225,8 +222,6 @@ public class GraphicPanel extends JPanel {
                                         }
                                     }
                                 }
-                            } else {
-                                coordinates.set(indices.get(i), xAndY);
                             }
                         }
                         ballsList.removeIf(Objects::isNull);
@@ -243,7 +238,6 @@ public class GraphicPanel extends JPanel {
                     }
                 });
                 timer.start();
-                graphicPanel.timer = timer;
             }
 
             @Override
@@ -291,13 +285,11 @@ public class GraphicPanel extends JPanel {
 
     public void showPausePanel() {
         endPanel.setVisible(false);
-        timer.stop();
-        pausePanel.setVisible(true);
+        // pausePanel.setVisible(true);
     }
 
     public void showEndPanel() {
-        pausePanel.setVisible(false);
-        timer.stop();
+        // pausePanel.setVisible(false);
         endPanel.setVisible(true);
     }
 

@@ -14,21 +14,21 @@ public class BouncingBalls {
         JPanel panel = new JPanel();
         JPanel controlPanel = new JPanel();
         GraphicPanel graphicPanel = new GraphicPanel(700, 1000, 60);
-        JButton pauseButton = new JButton();
+        // JButton pauseButton = new JButton();
         JButton stopButton = new JButton();
 
         private void configure() {
             // Reference: https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/box.html
             panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-            pauseButton.setText("Pause");
+            // pauseButton.setText("Pause");
             stopButton.setText("Stop");
-            pauseButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    graphicPanel.showPausePanel();
-                }
-            });
+            // pauseButton.addActionListener(new ActionListener() {
+            //     @Override
+            //     public void actionPerformed(ActionEvent e) {
+            //         graphicPanel.showPausePanel();
+            //     }
+            // });
             stopButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -36,7 +36,7 @@ public class BouncingBalls {
                 }
             });
 
-            controlPanel.add(pauseButton);
+            // controlPanel.add(pauseButton);
             controlPanel.add(stopButton);
             controlPanel.setBackground(Color.BLUE);
             controlPanel.setMaximumSize(new Dimension(700, 50));
