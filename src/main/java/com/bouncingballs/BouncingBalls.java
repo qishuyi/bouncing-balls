@@ -2,6 +2,8 @@ package com.bouncingballs;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.*;
 
@@ -11,7 +13,7 @@ public class BouncingBalls {
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
         JPanel controlPanel = new JPanel();
-        JPanel graphicPanel = new GraphicPanel(700, 1000, 60);
+        GraphicPanel graphicPanel = new GraphicPanel(700, 1000, 60);
         JButton pauseButton = new JButton();
         JButton stopButton = new JButton();
 
@@ -21,6 +23,18 @@ public class BouncingBalls {
 
             pauseButton.setText("Pause");
             stopButton.setText("Stop");
+            pauseButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    graphicPanel.showPausePanel();
+                }
+            });
+            stopButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    graphicPanel.showEndPanel();
+                }
+            });
 
             controlPanel.add(pauseButton);
             controlPanel.add(stopButton);
