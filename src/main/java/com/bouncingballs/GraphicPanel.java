@@ -18,25 +18,35 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class GraphicPanel extends JPanel {
-    ArrayList<Ball> ballsList = new ArrayList<>();
+    // Constants: colors and number of balls
     private final Color[] allColors = { Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.GRAY,
-            Color.PINK };
+        Color.PINK };
     private final int numBalls = 20;
-    ArrayList<ArrayList<Integer>> coordinates = new ArrayList<>();
-    Random rand = new Random();
-    Random coordXRand = new Random();
-    Random coordYRand = new Random();
-    JPanel endPanel = new JPanel();
-    JButton endYesButton = new JButton("Yes");
-    JButton endNoButton = new JButton("No");
-    JPanel pausePanel = new JPanel();
-    JButton pauseYesButton = new JButton("Yes");
-    JButton pauseNoButton = new JButton("No");
+
+    // List of ball objects and list of coordinates
+    private ArrayList<Ball> ballsList = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> coordinates = new ArrayList<>();
+
+    // Random objects
+    private Random rand = new Random();
+    private Random coordXRand = new Random();
+    private Random coordYRand = new Random();
+
+    // Swing components
+    private JPanel endPanel = new JPanel();
+    private JButton endYesButton = new JButton("Yes");
+    private JButton endNoButton = new JButton("No");
+    private JPanel pausePanel = new JPanel();
+    private JButton pauseYesButton = new JButton("Yes");
+    private JButton pauseNoButton = new JButton("No");
+
+    // Parameters to this class
     private int width;
     private int height;
     private int yDistance;
     private Timer timer;
 
+    // Configure panels and the buttons on the panel
     private void configurePanels() {
         pausePanel.setLayout(new BorderLayout());
         JLabel pauseLabel = new JLabel("Continue the game?");
@@ -44,13 +54,16 @@ public class GraphicPanel extends JPanel {
         pauseYesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Slows down the movement of the balls
                 timer.start();
+
                 pausePanel.setVisible(false);
             }
         });
         pauseNoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Exit the game
                 System.exit(0);
             }
         });
@@ -64,12 +77,14 @@ public class GraphicPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 endPanel.setVisible(false);
+                // Reinitialize the balls
                 initialize();
             }
         });
         endNoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Exit the game
                 System.exit(0);
             }
         });
@@ -78,34 +93,50 @@ public class GraphicPanel extends JPanel {
 
         pausePanel.setVisible(false);
         endPanel.setVisible(false);
+
+        // Add the panels to this big panel
         add(pausePanel);
         add(endPanel);
     }
 
     private void initialize() {
+        // Balls are positioned starting from these coordinates
         int x = 10;
         int y = 10;
+
         for (int i = 0; i < numBalls; ++i) {
+            // Get a random color
             Random colorRand = new Random();
             Color color = allColors[colorRand.nextInt(allColors.length)];
+            
+            // Get a random diameter
             int diameter = 10 + rand.nextInt(40);
+
+            // Get the next random x coordinate and adjust relative to the width
             int ballX = (x + 25 + coordXRand.nextInt(100)) % width;
             if (ballX + diameter / 2 > width) {
                 ballX = (ballX - diameter / 2) % width - diameter / 2;
             } else if (ballX - diameter / 2 < 0) {
                 ballX = diameter / 2 + ballX % width;
             }
+
+            // Get the next random y coordinate and adjust relative to the height
             int ballY = (y + 25 + coordYRand.nextInt(100)) % height;
             if (ballY + diameter / 2 > height) {
                 ballY = yDistance + (ballY - diameter / 2) % (height - yDistance) - diameter / 2;
             } else if (ballY - diameter / 2 < yDistance) {
                 ballY = yDistance + diameter / 2 + ballY % (height - yDistance);
             }
+
+            // Add the ball to the list
             ballsList.add(new Ball(ballX, ballY, diameter, color));
+
+            // Add the x and y coordinates to the list
             ArrayList<Integer> xAndY = new ArrayList<>();
             xAndY.add(ballX);
             xAndY.add(ballY);
             coordinates.add(xAndY);
+
             x = ballX;
             y = ballY;
         }
@@ -121,73 +152,81 @@ public class GraphicPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         for (int i = 0; i < indices.size(); ++i) {
+                            // Skip out of range indices
                             if (indices.get(i) >= ballsList.size()) {
                                 continue;
                             }
+                            
                             Ball ball = ballsList.get(indices.get(i));
+                            // Skip null elements
                             if (ball == null) {
                                 continue;
                             }
+
                             int ballX = ball.getX();
                             int ballY = ball.getY();
-
                             int xMovePerSecond = ball.getXMovePerSecond();
                             int yMovePerSecond = ball.getYMovePerSecond();
                             ball.setX(ballX + xMovePerSecond);
                             ball.setY(ballY + yMovePerSecond);
                             ballX = ball.getX();
                             ballY = ball.getY();
+
                             int d = ball.getDiameter();
                             // Make the ball bounce toward the sides and back
+                            // Bounce the ball towards the right and bottom sides of the panel
                             if (ballX + d > width || ballY + d > height) {
                                 if (ballX + d > width) {
-                                    // System.out.println("X" + (width - d));
                                     ball.setX(width - d);
                                 }
                                 if (ballY + d > height) {
-                                    // System.out.println("Y" + (height - d));
                                     ball.setY(height - d);
                                 }
+                                // Move the ball in opposite direction
                                 ball.setXMovePerSecond(xMovePerSecond * -1);
                                 ball.setYMovePerSecond(yMovePerSecond * -1);
+                            // Bounce the ball towards the left and top sides of the panel
                             } else if (ballX - d < 0 || ballY - d < yDistance) {
                                 if (ballX - d < 0) {
-                                    // System.out.println("X" + d);
                                     ball.setX(d);
                                 }
                                 if (ballY - d < yDistance) {
-                                    // System.out.println("Y" + (yDistance + d));
                                     ball.setY(yDistance + d);
                                 }
+                                // Move the ball in opposite direction
                                 ball.setXMovePerSecond(xMovePerSecond * -1);
                                 ball.setYMovePerSecond(yMovePerSecond * -1);
                             }
-                            // Remove smaller balls when they collide
+
                             ArrayList<Integer> xAndY = new ArrayList<>();
                             xAndY.add(ball.getX());
                             xAndY.add(ball.getY());
+                            // Remove smaller balls when they collide
                             if (coordinates.contains(xAndY)) {
+                                // Find colliding ball
                                 int otherIndex = coordinates.indexOf(xAndY);
+                                // Skip out of range indices
                                 if (otherIndex < ballsList.size()) {
                                     Ball otherBall = ballsList.get(otherIndex);
+                                    // Skip null elements
                                     if (otherBall != null) {
                                         if (ball.getDiameter() < otherBall.getDiameter()) {
-                                            ballsList.set(i, null);
+                                            ballsList.set(indices.get(i), null);
                                             coordinates.set(otherIndex, null);
                                         } else if (ball.getDiameter() > otherBall.getDiameter()) {
                                             ballsList.set(otherIndex, null);
                                             coordinates.set(otherIndex, null);
-                                            coordinates.set(i, xAndY);
+                                            coordinates.set(indices.get(i), xAndY);
                                         } else {
-                                            ballsList.set(i, null);
+                                            ballsList.set(indices.get(i), null);
                                             ballsList.set(otherIndex, null);
-                                            coordinates.set(i, null);
+                                            coordinates.set(indices.get(i), null);
                                             coordinates.set(otherIndex, null);
                                         }
                                     }
-                                } else {
-                                    coordinates.set(i, xAndY);
                                 }
+                            } else {
+                                coordinates.set(indices.get(i), xAndY);
                             }
                         }
                         ballsList.removeIf(Objects::isNull);
