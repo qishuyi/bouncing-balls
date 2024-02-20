@@ -1,3 +1,6 @@
+/**
+ * This file defines the panel with the bouncing balls.
+ */
 package com.bouncingballs;
 
 import javax.swing.JPanel;
@@ -19,81 +22,92 @@ import java.awt.event.MouseEvent;
 
 public class GraphicPanel extends JPanel {
     // Constants: colors and number of balls
-    private final Color[] allColors = { Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.GRAY,
+    private static final Color[] ALL_COLORS = { Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.GRAY,
         Color.PINK };
-    private final int numBalls = 20;
+    private static final int NUM_BALLS = 20;
 
     // List of ball objects and list of coordinates
-    private ArrayList<Ball> ballsList = new ArrayList<>();
+    private ArrayList<Ball> balls_list = new ArrayList<>();
     private ArrayList<ArrayList<Integer>> coordinates = new ArrayList<>();
 
     // Random objects
     private Random rand = new Random();
-    private Random coordXRand = new Random();
-    private Random coordYRand = new Random();
+    private Random coord_x_rand = new Random();
+    private Random coord_y_rand = new Random();
 
     // Swing components
-    private JPanel endPanel = new JPanel();
-    private JButton endYesButton = new JButton("Yes");
-    private JButton endNoButton = new JButton("No");
-    // private JPanel pausePanel = new JPanel();
-    // private JButton pauseYesButton = new JButton("Yes");
-    // private JButton pauseNoButton = new JButton("No");
+    private JPanel end_panel = new JPanel();
+    private JButton end_yes_button = new JButton("Yes");
+    private JButton end_no_button = new JButton("No");
 
     // Parameters to this class
     private int width;
     private int height;
-    private int yDistance;
-    // private ArrayList<Timer> timers;
+    private int y_distance;
+
+    public GraphicPanel(int width, int height, int yDistance) {
+        configurePanels();
+        this.width = width;
+        this.height = height;
+        this.y_distance = yDistance;
+        initialize();
+    }
+
+    public void showPausePanel() {
+        end_panel.setVisible(false);
+        // pausePanel.setVisible(true);
+    }
+
+    public void showEndPanel() {
+        // pausePanel.setVisible(false);
+        end_panel.setVisible(true);
+    }
+
+    // Reference:
+    // https://stackoverflow.com/questions/23819196/how-to-move-a-circle-automatically-in-java
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        for (int i = 0; i < balls_list.size(); ++i) {
+            Ball cur = balls_list.get(i);
+            int x = cur.getX();
+            int y = cur.getY();
+            int diameter = cur.getDiameter();
+            Color color = cur.getColor();
+            g.setColor(color);
+            g.fillOval(x, y - diameter, diameter, diameter);
+        }
+    }
 
     // Configure panels and the buttons on the panel
     private void configurePanels() {
-        // pausePanel.setLayout(new BorderLayout());
-        // JLabel pauseLabel = new JLabel("Continue the game?");
-        // pausePanel.add(pauseLabel, BorderLayout.PAGE_START);
-        // pauseYesButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         pausePanel.setVisible(false);
-        //     }
-        // });
-        // pauseNoButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         // Exit the game
-        //         System.exit(0);
-        //     }
-        // });
-        // pausePanel.add(pauseYesButton, BorderLayout.WEST);
-        // pausePanel.add(pauseNoButton, BorderLayout.EAST);
-
-        endPanel.setLayout(new BorderLayout());
+        end_panel.setLayout(new BorderLayout());
         JLabel endLabel = new JLabel("Do you want to restart the game? Clicing \"No\" will close the window.");
-        endPanel.add(endLabel, BorderLayout.PAGE_START);
-        endYesButton.addActionListener(new ActionListener() {
+        end_panel.add(endLabel, BorderLayout.PAGE_START);
+        end_yes_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                endPanel.setVisible(false);
+                end_panel.setVisible(false);
                 // Reinitialize the balls
                 initialize();
             }
         });
-        endNoButton.addActionListener(new ActionListener() {
+        end_no_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Exit the game
                 System.exit(0);
             }
         });
-        endPanel.add(endYesButton, BorderLayout.WEST);
-        endPanel.add(endNoButton, BorderLayout.EAST);
+        end_panel.add(end_yes_button, BorderLayout.WEST);
+        end_panel.add(end_no_button, BorderLayout.EAST);
 
         // pausePanel.setVisible(false);
-        endPanel.setVisible(false);
+        end_panel.setVisible(false);
 
         // Add the panels to this big panel
         // add(pausePanel);
-        add(endPanel);
+        add(end_panel);
     }
 
     private void initialize() {
@@ -101,16 +115,16 @@ public class GraphicPanel extends JPanel {
         int x = 10;
         int y = 10;
 
-        for (int i = 0; i < numBalls; ++i) {
+        for (int i = 0; i < NUM_BALLS; ++i) {
             // Get a random color
             Random colorRand = new Random();
-            Color color = allColors[colorRand.nextInt(allColors.length)];
+            Color color = ALL_COLORS[colorRand.nextInt(ALL_COLORS.length)];
             
             // Get a random diameter
             int diameter = 10 + rand.nextInt(40);
 
             // Get the next random x coordinate and adjust relative to the width
-            int ballX = (x + 25 + coordXRand.nextInt(100)) % width;
+            int ballX = (x + 25 + coord_x_rand.nextInt(100)) % width;
             if (ballX + diameter / 2 > width) {
                 ballX = (ballX - diameter / 2) % width - diameter / 2;
             } else if (ballX - diameter / 2 < 0) {
@@ -118,15 +132,15 @@ public class GraphicPanel extends JPanel {
             }
 
             // Get the next random y coordinate and adjust relative to the height
-            int ballY = (y + 25 + coordYRand.nextInt(100)) % height;
+            int ballY = (y + 25 + coord_y_rand.nextInt(100)) % height;
             if (ballY + diameter / 2 > height) {
-                ballY = yDistance + (ballY - diameter / 2) % (height - yDistance) - diameter / 2;
-            } else if (ballY - diameter / 2 < yDistance) {
-                ballY = yDistance + diameter / 2 + ballY % (height - yDistance);
+                ballY = y_distance + (ballY - diameter / 2) % (height - y_distance) - diameter / 2;
+            } else if (ballY - diameter / 2 < y_distance) {
+                ballY = y_distance + diameter / 2 + ballY % (height - y_distance);
             }
 
             // Add the ball to the list
-            ballsList.add(new Ball(ballX, ballY, diameter, color));
+            balls_list.add(new Ball(ballX, ballY, diameter, color));
 
             // Add the x and y coordinates to the list
             ArrayList<Integer> xAndY = new ArrayList<>();
@@ -144,16 +158,16 @@ public class GraphicPanel extends JPanel {
             private void bounceBalls(ArrayList<Integer> indices) {
                 // Reference:
                 // https://stackoverflow.com/questions/23819196/how-to-move-a-circle-automatically-in-java
-                Timer timer = new Timer(10, new ActionListener() {
+                Timer timer = new Timer(100, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         for (int i = 0; i < indices.size(); ++i) {
                             // Skip out of range indices
-                            if (indices.get(i) >= ballsList.size()) {
+                            if (indices.get(i) >= balls_list.size()) {
                                 continue;
                             }
                             
-                            Ball ball = ballsList.get(indices.get(i));
+                            Ball ball = balls_list.get(indices.get(i));
                             // Skip null elements
                             if (ball == null) {
                                 continue;
@@ -182,12 +196,12 @@ public class GraphicPanel extends JPanel {
                                 ball.setXMovePerSecond(xMovePerSecond * -1);
                                 ball.setYMovePerSecond(yMovePerSecond * -1);
                             // Bounce the ball towards the left and top sides of the panel
-                            } else if (ballX - d < 0 || ballY - d < yDistance) {
+                            } else if (ballX - d < 0 || ballY - d < y_distance) {
                                 if (ballX - d < 0) {
                                     ball.setX(d);
                                 }
-                                if (ballY - d < yDistance) {
-                                    ball.setY(yDistance + d);
+                                if (ballY - d < y_distance) {
+                                    ball.setY(y_distance + d);
                                 }
                                 // Move the ball in opposite direction
                                 ball.setXMovePerSecond(xMovePerSecond * -1);
@@ -202,21 +216,21 @@ public class GraphicPanel extends JPanel {
                                 // Find colliding ball
                                 int otherIndex = coordinates.indexOf(xAndY);
                                 // Skip out of range indices
-                                if (otherIndex < ballsList.size()) {
-                                    Ball otherBall = ballsList.get(otherIndex);
+                                if (otherIndex < balls_list.size()) {
+                                    Ball otherBall = balls_list.get(otherIndex);
                                     // Skip null elements
                                     if (otherBall != null) {
                                         if (ball.getDiameter() < otherBall.getDiameter()) {
-                                            ballsList.set(indices.get(i), null);
+                                            balls_list.set(indices.get(i), null);
                                             coordinates.set(otherIndex, null);
                                         } else if (ball.getDiameter() > otherBall.getDiameter()) {
-                                            ballsList.set(otherIndex, null);
+                                            balls_list.set(otherIndex, null);
                                             coordinates.set(otherIndex, null);
                                             coordinates.set(indices.get(i), xAndY);
                                             break;
                                         } else {
-                                            ballsList.set(indices.get(i), null);
-                                            ballsList.set(otherIndex, null);
+                                            balls_list.set(indices.get(i), null);
+                                            balls_list.set(otherIndex, null);
                                             coordinates.set(indices.get(i), null);
                                             coordinates.set(otherIndex, null);
                                         }
@@ -224,15 +238,15 @@ public class GraphicPanel extends JPanel {
                                 }
                             }
                         }
-                        ballsList.removeIf(Objects::isNull);
+                        balls_list.removeIf(Objects::isNull);
                         coordinates.removeIf(Objects::isNull);
-                        if (ballsList.size() <= 1) {
-                            if (ballsList.size() == 1) {
-                                Ball ball = ballsList.get(0);
+                        if (balls_list.size() <= 1) {
+                            if (balls_list.size() == 1) {
+                                Ball ball = balls_list.get(0);
                                 ball.setXMovePerSecond(0);
                                 ball.setYMovePerSecond(0);
                             }
-                            endPanel.setVisible(true);
+                            end_panel.setVisible(true);
                         }
                         repaint();
                     }
@@ -249,63 +263,32 @@ public class GraphicPanel extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 Random numRandom = new Random();
-                int count = numRandom.nextInt(ballsList.size());
+                int count = numRandom.nextInt(balls_list.size());
                 Random indexRandom = new Random();
                 ArrayList<Integer> indicesToBounce = new ArrayList<>();
                 for (int i = 0; i < count; ++i) {
-                    indicesToBounce.add(indexRandom.nextInt(ballsList.size()));
+                    indicesToBounce.add(indexRandom.nextInt(balls_list.size()));
                 }
+
                 int xMovePerSecond = 2;
                 int yMovePerSecond = 2;
-                if (x < width / 2 && y < (height + yDistance) / 2) {
+                if (x < width / 2 && y < (height + y_distance) / 2) {
                     xMovePerSecond = -2;
                     yMovePerSecond = -2;
-                } else if (x > width / 2 && y < (height + yDistance) / 2) {
+                } else if (x > width / 2 && y < (height + y_distance) / 2) {
                     yMovePerSecond = -2;
-                } else if (x < width / 2 && y > (height + yDistance) / 2) {
+                } else if (x < width / 2 && y > (height + y_distance) / 2) {
                     xMovePerSecond = -2;
                 }
+
                 for (int i = 0; i < indicesToBounce.size(); ++i) {
-                    Ball ball = ballsList.get(indicesToBounce.get(i));
+                    Ball ball = balls_list.get(indicesToBounce.get(i));
                     ball.setXMovePerSecond(xMovePerSecond);
                     ball.setYMovePerSecond(yMovePerSecond);
                 }
+
                 bounceBalls(indicesToBounce);
             }
         });
-    }
-
-    public GraphicPanel(int width, int height, int yDistance) {
-        configurePanels();
-        this.width = width;
-        this.height = height;
-        this.yDistance = yDistance;
-        initialize();
-    }
-
-    public void showPausePanel() {
-        endPanel.setVisible(false);
-        // pausePanel.setVisible(true);
-    }
-
-    public void showEndPanel() {
-        // pausePanel.setVisible(false);
-        endPanel.setVisible(true);
-    }
-
-    // Reference:
-    // https://stackoverflow.com/questions/23819196/how-to-move-a-circle-automatically-in-java
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        for (int i = 0; i < ballsList.size(); ++i) {
-            Ball cur = ballsList.get(i);
-            int x = cur.getX();
-            int y = cur.getY();
-            int diameter = cur.getDiameter();
-            Color color = cur.getColor();
-            g.setColor(color);
-            g.fillOval(x, y - diameter, diameter, diameter);
-        }
     }
 }

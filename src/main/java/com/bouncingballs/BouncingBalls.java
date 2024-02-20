@@ -1,3 +1,6 @@
+/**
+ * This file is the top-level definition of the game.
+ */
 package com.bouncingballs;
 
 import java.awt.Color;
@@ -12,40 +15,32 @@ public class BouncingBalls {
         // Reference: https://www.javatpoint.com/java-jframe
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
-        JPanel controlPanel = new JPanel();
-        GraphicPanel graphicPanel = new GraphicPanel(700, 1000, 60);
+        JPanel control_panel = new JPanel();
+        GraphicPanel graphic_panel = new GraphicPanel(700, 1000, 60);
         // JButton pauseButton = new JButton();
-        JButton stopButton = new JButton();
+        JButton stop_button = new JButton();
 
         private void configure() {
             // Reference: https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/layout/box.html
             panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-            // pauseButton.setText("Pause");
-            stopButton.setText("Stop");
-            // pauseButton.addActionListener(new ActionListener() {
-            //     @Override
-            //     public void actionPerformed(ActionEvent e) {
-            //         graphicPanel.showPausePanel();
-            //     }
-            // });
-            stopButton.addActionListener(new ActionListener() {
+            stop_button.setText("Stop");
+            stop_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    graphicPanel.showEndPanel();
+                    graphic_panel.showEndPanel();
                 }
             });
-
-            // controlPanel.add(pauseButton);
-            controlPanel.add(stopButton);
-            controlPanel.setBackground(Color.BLUE);
-            controlPanel.setMaximumSize(new Dimension(700, 50));
-            panel.add(controlPanel);
+            
+            control_panel.add(stop_button);
+            control_panel.setBackground(Color.BLUE);
+            control_panel.setMaximumSize(new Dimension(700, 50));
+            panel.add(control_panel);
             
             panel.add(Box.createRigidArea(new Dimension(10, 10)));
             
-            graphicPanel.setBackground(Color.BLACK);
-            panel.add(graphicPanel);
+            graphic_panel.setBackground(Color.BLACK);
+            panel.add(graphic_panel);
 
             frame.add(panel);
             frame.setSize(new Dimension(700, 1000));

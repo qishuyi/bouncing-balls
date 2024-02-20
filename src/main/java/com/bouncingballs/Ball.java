@@ -1,3 +1,6 @@
+/**
+ * This file defines the properties of the balls in the game.
+ */
 package com.bouncingballs;
 
 import java.awt.Color;
@@ -7,8 +10,8 @@ public class Ball {
     private int y;
     private int diameter;
     private Color color;
-    private int xMovePerSecond = 2;
-    private int yMovePerSecond = 2;
+    private int x_move_per_second = 2;
+    private int y_move_per_second = 2;
 
     public Ball(int x, int y, int diameter, Color color) {
         this.x = x;
@@ -34,11 +37,11 @@ public class Ball {
     }
 
     public int getXMovePerSecond() {
-        return this.xMovePerSecond;
+        return this.x_move_per_second;
     }
 
     public int getYMovePerSecond() {
-        return this.yMovePerSecond;
+        return this.y_move_per_second;
     }
 
     public void setX(int x) {
@@ -50,10 +53,10 @@ public class Ball {
     }
 
     public void setXMovePerSecond(int second) {
-        this.xMovePerSecond = second;
+        this.x_move_per_second = second;
     }
 
     public void setYMovePerSecond(int second) {
-        this.yMovePerSecond = second;
+        this.y_move_per_second = second;
     }
 }
