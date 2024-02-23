@@ -53,13 +53,7 @@ public class GraphicPanel extends JPanel {
         initialize();
     }
 
-    public void showPausePanel() {
-        end_panel.setVisible(false);
-        // pausePanel.setVisible(true);
-    }
-
     public void showEndPanel() {
-        // pausePanel.setVisible(false);
         end_panel.setVisible(true);
     }
 
