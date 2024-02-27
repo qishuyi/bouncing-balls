@@ -24,14 +24,12 @@ public class GraphicPanel extends JPanel {
     // Constants: colors and number of balls
     private static final Color[] ALL_COLORS = { Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.GRAY,
         Color.PINK };
-    private static final int NUM_BALLS = 20;
 
     // List of ball objects and list of coordinates
     private ArrayList<Ball> balls_list = new ArrayList<>();
-    private ArrayList<ArrayList<Integer>> coordinates = new ArrayList<>();
+    private ArrayList<ArrayList<Double>> coordinates = new ArrayList<>();
 
     // Random objects
-    private Random rand = new Random();
     private Random coord_x_rand = new Random();
     private Random coord_y_rand = new Random();
 
@@ -44,12 +42,20 @@ public class GraphicPanel extends JPanel {
     private int width;
     private int height;
     private int y_distance;
+    private int num_balls;
+    private ArrayList<Double> ball_size;
+    private ArrayList<Double> ball_speed;
+    private ArrayList<Integer> ball_color;
 
-    public GraphicPanel(int width, int height, int yDistance) {
+    public GraphicPanel(int width, int height, int yDistance, int counter, ArrayList<Double> ballSize, ArrayList<Double> ballSpeed, ArrayList<Integer> ballColors) {
         configurePanels();
         this.width = width;
         this.height = height;
         this.y_distance = yDistance;
+        this.num_balls = counter;
+        this.ball_size = ballSize;
+        this.ball_speed = ballSpeed;
+        this.ball_color = ballColors;
         initialize();
     }
 
@@ -64,12 +70,12 @@ public class GraphicPanel extends JPanel {
         super.paintComponent(g);
         for (int i = 0; i < balls_list.size(); ++i) {
             Ball cur = balls_list.get(i);
-            int x = cur.getX();
-            int y = cur.getY();
+            double x = cur.getX();
+            double y = cur.getY();
             int diameter = cur.getDiameter();
             Color color = cur.getColor();
             g.setColor(color);
-            g.fillOval(x, y - diameter, diameter, diameter);
+            g.fillOval((int)x, (int)(y - diameter), diameter, diameter);
         }
     }
 
@@ -106,19 +112,18 @@ public class GraphicPanel extends JPanel {
 
     private void initialize() {
         // Balls are positioned starting from these coordinates
-        int x = 10;
-        int y = 10;
+        double x = 10;
+        double y = 10;
 
-        for (int i = 0; i < NUM_BALLS; ++i) {
+        for (int i = 0; i < num_balls; ++i) {
             // Get a random color
-            Random colorRand = new Random();
-            Color color = ALL_COLORS[colorRand.nextInt(ALL_COLORS.length)];
+            Color color = ALL_COLORS[ball_color.get(i) % ALL_COLORS.length];
             
             // Get a random diameter
-            int diameter = 10 + rand.nextInt(40);
-
+            int diameter = 10 + (int)Math.round(ball_size.get(i)) % 40;
+    
             // Get the next random x coordinate and adjust relative to the width
-            int ballX = (x + 25 + coord_x_rand.nextInt(100)) % width;
+            double ballX = (x + 25 + coord_x_rand.nextInt(100)) % width;
             if (ballX + diameter / 2 > width) {
                 ballX = (ballX - diameter / 2) % width - diameter / 2;
             } else if (ballX - diameter / 2 < 0) {
@@ -126,7 +131,7 @@ public class GraphicPanel extends JPanel {
             }
 
             // Get the next random y coordinate and adjust relative to the height
-            int ballY = (y + 25 + coord_y_rand.nextInt(100)) % height;
+            double ballY = (y + 25 + coord_y_rand.nextInt(100)) % height;
             if (ballY + diameter / 2 > height) {
                 ballY = y_distance + (ballY - diameter / 2) % (height - y_distance) - diameter / 2;
             } else if (ballY - diameter / 2 < y_distance) {
@@ -134,10 +139,10 @@ public class GraphicPanel extends JPanel {
             }
 
             // Add the ball to the list
-            balls_list.add(new Ball(ballX, ballY, diameter, color));
+            balls_list.add(new Ball(ballX, ballY, diameter, color, this.ball_speed.get(i) / 100 + 1, this.ball_speed.get(i) / 100 + 1));
 
             // Add the x and y coordinates to the list
-            ArrayList<Integer> xAndY = new ArrayList<>();
+            ArrayList<Double> xAndY = new ArrayList<>();
             xAndY.add(ballX);
             xAndY.add(ballY);
             coordinates.add(xAndY);
@@ -167,10 +172,10 @@ public class GraphicPanel extends JPanel {
                                 continue;
                             }
 
-                            int ballX = ball.getX();
-                            int ballY = ball.getY();
-                            int xMovePerSecond = ball.getXMovePerSecond();
-                            int yMovePerSecond = ball.getYMovePerSecond();
+                            double ballX = ball.getX();
+                            double ballY = ball.getY();
+                            double xMovePerSecond = ball.getXMovePerSecond();
+                            double yMovePerSecond = ball.getYMovePerSecond();
                             ball.setX(ballX + xMovePerSecond);
                             ball.setY(ballY + yMovePerSecond);
                             ballX = ball.getX();
@@ -202,7 +207,7 @@ public class GraphicPanel extends JPanel {
                                 ball.setYMovePerSecond(yMovePerSecond * -1);
                             }
 
-                            ArrayList<Integer> xAndY = new ArrayList<>();
+                            ArrayList<Double> xAndY = new ArrayList<>();
                             xAndY.add(ball.getX());
                             xAndY.add(ball.getY());
                             // Remove smaller balls when they collide
